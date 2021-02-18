@@ -12,27 +12,27 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 public class SendMail {
-    public static void main(String[] args) {
-        String login = null;
-        String password = null;
-        {
-            // Enter data using BufferReader
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(System.in));
-
-            // Reading data using readLine
-            try {
-                login = reader.readLine();
-                password = reader.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            // Printing the read line
-
-        }
-        // Mention the Recipient's email addess
-        String to = "stefan.kwinta@gmail.com";
+    public static void send(String login,String password,String to) {
+//        String login = null;
+//        String password = null;
+//        {
+//            // Enter data using BufferReader
+//            BufferedReader reader = new BufferedReader(
+//                    new InputStreamReader(System.in));
+//
+//            // Reading data using readLine
+//            try {
+//                login = reader.readLine();
+//                password = reader.readLine();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            // Printing the read line
+//
+//        }
+//        // Mention the Recipient's email addess
+//        String to = "stefan.kwinta@gmail.com";
 
         // Mention the Sender's email address
         String from = login;
