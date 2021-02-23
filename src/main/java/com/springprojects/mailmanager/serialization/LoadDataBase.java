@@ -16,8 +16,8 @@ class LoadDatabase {
     CommandLineRunner initDatabase(AccountsRepository repository) {
 
         return args -> {
-            log.info("Preloading " + repository.save(new MailAccount("login","haslo",1)));
-            log.info("Preloading " + repository.save(new MailAccount("login2","haslo2",2)));
+            log.info("Preloading " + repository.save(new MailAccount("login","haslo")));
+            log.info("Preloading " + repository.save(new MailAccount("login2","haslo2")));
         };
     }
 }

@@ -9,20 +9,16 @@ import java.util.Objects;
 
 @Entity
 public class MailAccount {
-    private String login;
+    @Id private String login;
     private String password;
     private String address;
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    public MailAccount(String login, String password,long id) {
+    public MailAccount(String login, String password) {
         this.login = login;
         this.password = password;
-        this.id = id;
     }
 
     public MailAccount() {
-        id = Long.valueOf(8);
     }
 
     public String getAddress() {
@@ -33,6 +29,7 @@ public class MailAccount {
         this.address = address;
     }
 
+    @Id
     public String getLogin() {
         return login;
     }
@@ -49,16 +46,6 @@ public class MailAccount {
         this.password = password;
     }
 
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @Id
-    public long getId() {
-        return id;
-    }
-
     @Override
     public boolean equals(Object o) {
 
@@ -66,19 +53,19 @@ public class MailAccount {
             return true;
         if (!(o instanceof MailAccount))
             return false;
-        MailAccount employee = (MailAccount) o;
-        return Objects.equals(this.id, employee.id) && Objects.equals(this.login, employee.login)
-                && Objects.equals(this.password, employee.password);
+        MailAccount mailAccount = (MailAccount) o;
+        return Objects.equals(this.login, mailAccount.login)
+                && Objects.equals(this.password, mailAccount.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.login);
+        return Objects.hash(this.login, this.login);
     }
 
     @Override
     public String toString() {
-        return "MailAccount{" + "id=" + this.id + ", login='" + this.login + '\'' + ", password='" + this.password
+        return "MailAccount{login='" + this.login + '\''
                 + '\'' + ", address='" + this.address + '\'' + '}';
     }
 }

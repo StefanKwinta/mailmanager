@@ -15,8 +15,8 @@ class MailAccountModelAssembler implements RepresentationModelAssembler<MailAcco
     @Override
     public EntityModel<MailAccount> toModel(MailAccount mailAccount) {
 
-        return EntityModel.of(mailAccount, //
-                linkTo(methodOn(LoginController.class).getOne(mailAccount.getId())).withSelfRel(),
+        return EntityModel.of(mailAccount,
+                linkTo(methodOn(LoginController.class).getOne(mailAccount.getLogin())).withSelfRel(),
                 linkTo(methodOn(LoginController.class).getAll()).withRel("mailAccounts"));
     }
 }

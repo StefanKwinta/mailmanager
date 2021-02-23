@@ -2,7 +2,7 @@ package com.springprojects.mailmanager.exceptions;
 
 public class MailAccountNotFoundException extends RuntimeException {
 
-    public MailAccountNotFoundException(Long id) {
-        super("Could not find mail account " + id);
+    public MailAccountNotFoundException(String login) {
+        super("Could not find mail account " + login);
     }
 }
