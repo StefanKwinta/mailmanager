@@ -1,7 +1,7 @@
 package com.springprojects.mailmanager.controller;
 
 
-import com.springprojects.mailmanager.data.AccountsRepository;
+import com.springprojects.mailmanager.data.MailAccountsRepository;
 import com.springprojects.mailmanager.data.MailAccountModelAssembler;
 import com.springprojects.mailmanager.exceptions.MailAccountNotFoundException;
 import com.springprojects.mailmanager.mail.MailInbox;
@@ -20,11 +20,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 public class MailManagerController {
-    private final AccountsRepository repository;
+    private final MailAccountsRepository repository;
     private final MailAccountModelAssembler assembler;
     private final PasswordEncryptor passwordEncryptor;
 
-    MailManagerController(AccountsRepository repository,MailAccountModelAssembler assembler) {
+    MailManagerController(MailAccountsRepository repository, MailAccountModelAssembler assembler) {
         this.repository = repository;
         this.assembler = assembler;
         this.passwordEncryptor = new PasswordEncryptor();
