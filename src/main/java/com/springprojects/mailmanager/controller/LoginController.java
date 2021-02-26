@@ -1,32 +1,80 @@
 package com.springprojects.mailmanager.controller;
 
-import com.springprojects.mailmanager.mail.*;
-import com.springprojects.mailmanager.security.LoginData;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.springprojects.mailmanager.data.MailAccountsRepository;
+import com.springprojects.mailmanager.data.MailAccountModelAssembler;
+import com.springprojects.mailmanager.exceptions.MailAccountNotFoundException;
+import com.springprojects.mailmanager.security.PasswordEncryptor;
+import com.springprojects.mailmanager.model.MailAccount;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Controller
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+@RestController
 public class LoginController {
-    @GetMapping("/login")
-    public String getMapingMailManager(@ModelAttribute LoginData logindata, Model model) {
-        model.addAttribute("logindata", new LoginData());
-        model.addAttribute("subjects", "");
-        return "login";
+    private final MailAccountsRepository repository;
+    private final MailAccountModelAssembler assembler;
+    private final PasswordEncryptor passwordEncryptor;
+
+    LoginController(MailAccountsRepository repository, MailAccountModelAssembler assembler) {
+        this.repository = repository;
+        this.assembler = assembler;
+        this.passwordEncryptor = new PasswordEncryptor();
     }
+
+    @GetMapping("/login")
+    public CollectionModel<EntityModel<MailAccount>> getAll() {
+        List<EntityModel<MailAccount>> mailAccounts = repository.findAll().stream()
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(mailAccounts,linkTo(methodOn(LoginController.class).getAll()).withSelfRel());
+    }
+
+
+
+    @GetMapping("/login/{login}")
+    public EntityModel<MailAccount> getOne(@PathVariable String login) {
+
+        MailAccount mailAccount = repository.findById(login)
+                .orElseThrow(() -> new MailAccountNotFoundException(login));
+        return assembler.toModel(mailAccount);
+    }
+
+    @PutMapping("/login/{login}")
+    MailAccount replaceMailAccount(@RequestBody MailAccount newMailAccount, @PathVariable String login) {
+
+        return repository.findById(login)
+                .map(mailAccount -> {
+                    mailAccount.setLogin(newMailAccount.getLogin());
+                    mailAccount.setPassword(newMailAccount.getPassword());
+                    return repository.save(mailAccount);
+                })
+                .orElseGet(() -> {
+                    newMailAccount.setLogin(login);
+                    return repository.save(newMailAccount);
+                });
+    }
+
+
+
+    @DeleteMapping("/login/{login}")
+    void deleteMailAccount(@PathVariable String login) {
+        repository.deleteById(login);
+    }
+
     @PostMapping("/login")
-    public String postMapingMailManager(@ModelAttribute LoginData logindata, Model model,
-                                        @RequestParam(value = "send", required = false) String send,
-                                        @RequestParam(value = "fetch", required = false) String fetch) {
-        if(fetch != null && fetch.equals("Fetch")){
-            model.addAttribute("subjects", EmailRecive.read(logindata.getLogin(),logindata.getPassword()));
-        }else if(fetch != null && send.equals("Send")){
-            SendMail.send(logindata.getLogin(),logindata.getPassword(),logindata.getAddress());
-        }
-        model.addAttribute("logindata", logindata);
-        return "login";
+    ResponseEntity<?> newMailAccount(@RequestBody MailAccount newMailAccount) {
+        newMailAccount.setPassword(passwordEncryptor.encrypt(newMailAccount.getPassword()));
+        EntityModel<MailAccount> entityModel = assembler.toModel(repository.save(newMailAccount));
+
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 }

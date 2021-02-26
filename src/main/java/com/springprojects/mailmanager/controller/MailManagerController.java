@@ -1,14 +1,47 @@
 package com.springprojects.mailmanager.controller;
 
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.springprojects.mailmanager.data.MailAccountsRepository;
+import com.springprojects.mailmanager.data.MailAccountModelAssembler;
+import com.springprojects.mailmanager.exceptions.MailAccountNotFoundException;
+import com.springprojects.mailmanager.mail.MailInbox;
+import com.springprojects.mailmanager.mail.MailSender;
+import com.springprojects.mailmanager.security.PasswordEncryptor;
+import com.springprojects.mailmanager.model.MailAccount;
+import com.springprojects.mailmanager.model.MailContent;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.ArrayList;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+
+@RestController
 public class MailManagerController {
-    @GetMapping("/mailmanager")
-    public String getMapingMailManager() {
+    private final MailAccountsRepository repository;
+    private final MailAccountModelAssembler assembler;
+    private final PasswordEncryptor passwordEncryptor;
 
-        return "mailmanager";
+    MailManagerController(MailAccountsRepository repository, MailAccountModelAssembler assembler) {
+        this.repository = repository;
+        this.assembler = assembler;
+        this.passwordEncryptor = new PasswordEncryptor();
+    }
+
+    @GetMapping("/mailmanager/inbox/{login}")
+    public CollectionModel<MailContent> getOneInbox(@PathVariable String login) {
+        MailAccount mailAccount = repository.findById(login)
+                .orElseThrow(() -> new MailAccountNotFoundException(login));
+        ArrayList<MailContent> inbox = (ArrayList<MailContent>) MailInbox.getInbox(mailAccount.getLogin(),passwordEncryptor.decrypt(mailAccount.getPassword()));
+        return CollectionModel.of(inbox,linkTo(methodOn(MailManagerController.class).getOneInbox(login)).withSelfRel());
+    }
+    @PostMapping("/mailmanager/send/{login}")
+    public String sendFormOneAddress(@RequestBody MailContent mailContent,@PathVariable String login,@RequestParam(value = "sendto") String sendTo) {
+        MailAccount mailAccount = repository.findById(login).orElseThrow(() -> new MailAccountNotFoundException(login));
+        MailSender.sendMail(mailAccount.getLogin(),passwordEncryptor.decrypt(mailAccount.getPassword()),sendTo,mailContent);
+        return "Sended";
+
     }
 }
