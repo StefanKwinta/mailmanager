@@ -4,7 +4,7 @@ import com.springprojects.mailmanager.data.MailAccountsRepository;
 import com.springprojects.mailmanager.data.MailAccountModelAssembler;
 import com.springprojects.mailmanager.exceptions.MailAccountNotFoundException;
 import com.springprojects.mailmanager.security.PasswordEncryptor;
-import com.springprojects.mailmanager.serialization.MailAccount;
+import com.springprojects.mailmanager.model.MailAccount;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -43,7 +43,6 @@ public class LoginController {
 
         MailAccount mailAccount = repository.findById(login)
                 .orElseThrow(() -> new MailAccountNotFoundException(login));
-        System.out.println(passwordEncryptor.decrypt(mailAccount.getPassword()));
         return assembler.toModel(mailAccount);
     }
 

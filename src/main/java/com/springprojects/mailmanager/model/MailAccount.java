@@ -1,4 +1,4 @@
-package com.springprojects.mailmanager.serialization;
+package com.springprojects.mailmanager.model;
 
 
 import javax.persistence.Entity;

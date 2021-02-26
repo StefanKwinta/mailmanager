@@ -1,13 +1,13 @@
-package com.springprojects.mailmanager.serialization;
+package com.springprojects.mailmanager.model;
 
 public class MailContent {
     private String subject;
-    private String getFrom;
+    private String from;
     private String content;
 
-    public MailContent(String subject, String getFrom, String content) {
+    public MailContent(String subject, String from, String content) {
         this.subject = subject;
-        this.getFrom = getFrom;
+        this.from = from;
         this.content = content;
     }
 
@@ -19,12 +19,12 @@ public class MailContent {
         this.subject = subject;
     }
 
-    public String getGetFrom() {
-        return getFrom;
+    public String getFrom() {
+        return from;
     }
 
-    public void setGetFrom(String getFrom) {
-        this.getFrom = getFrom;
+    public void setFrom(String from) {
+        this.from = from;
     }
 
     public String getContent() {

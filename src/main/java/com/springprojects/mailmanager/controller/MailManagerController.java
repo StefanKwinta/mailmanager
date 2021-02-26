@@ -5,13 +5,13 @@ import com.springprojects.mailmanager.data.MailAccountsRepository;
 import com.springprojects.mailmanager.data.MailAccountModelAssembler;
 import com.springprojects.mailmanager.exceptions.MailAccountNotFoundException;
 import com.springprojects.mailmanager.mail.MailInbox;
+import com.springprojects.mailmanager.mail.MailSender;
 import com.springprojects.mailmanager.security.PasswordEncryptor;
-import com.springprojects.mailmanager.serialization.MailAccount;
-import com.springprojects.mailmanager.serialization.MailContent;
+import com.springprojects.mailmanager.model.MailAccount;
+import com.springprojects.mailmanager.model.MailContent;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -31,11 +31,17 @@ public class MailManagerController {
     }
 
     @GetMapping("/mailmanager/inbox/{login}")
-    public CollectionModel<MailContent> getOne(@PathVariable String login) {
-
+    public CollectionModel<MailContent> getOneInbox(@PathVariable String login) {
         MailAccount mailAccount = repository.findById(login)
                 .orElseThrow(() -> new MailAccountNotFoundException(login));
         ArrayList<MailContent> inbox = (ArrayList<MailContent>) MailInbox.getInbox(mailAccount.getLogin(),passwordEncryptor.decrypt(mailAccount.getPassword()));
-        return CollectionModel.of(inbox,linkTo(methodOn(MailManagerController.class).getOne(login)).withSelfRel());
+        return CollectionModel.of(inbox,linkTo(methodOn(MailManagerController.class).getOneInbox(login)).withSelfRel());
+    }
+    @PostMapping("/mailmanager/send/{login}")
+    public String sendFormOneAddress(@RequestBody MailContent mailContent,@PathVariable String login,@RequestParam(value = "sendto") String sendTo) {
+        MailAccount mailAccount = repository.findById(login).orElseThrow(() -> new MailAccountNotFoundException(login));
+        MailSender.sendMail(mailAccount.getLogin(),passwordEncryptor.decrypt(mailAccount.getPassword()),sendTo,mailContent);
+        return "Sended";
+
     }
 }

@@ -3,7 +3,7 @@ package com.springprojects.mailmanager.data;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import com.springprojects.mailmanager.controller.LoginController;
-import com.springprojects.mailmanager.serialization.MailAccount;
+import com.springprojects.mailmanager.model.MailAccount;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
