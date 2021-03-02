@@ -1,5 +1,6 @@
 package com.springprojects.mailmanager.mail;
 
+import com.springprojects.mailmanager.model.MailContent;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -9,6 +10,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,7 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MailInboxTests {
     @Test
     public void inboxTest(){
-        //MailInbox.getInbox("test@localhost","test");
+        //List<MailContent> content= MailInbox.getInbox("test@localhost","test");
+        //assert(content.size() == 1);
     }
 
 

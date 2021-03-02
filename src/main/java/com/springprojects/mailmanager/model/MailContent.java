@@ -1,14 +1,27 @@
 package com.springprojects.mailmanager.model;
 
+import java.util.Date;
+
 public class MailContent {
     private String subject;
     private String from;
     private String content;
+    private Date receiveDate;
 
-    public MailContent(String subject, String from, String content) {
+    public MailContent(String subject, String from, String content, Date receiveDate) {
         this.subject = subject;
         this.from = from;
         this.content = content;
+        this.receiveDate = receiveDate;
+    }
+
+
+    public Date getReceiveDate() {
+        return receiveDate;
+    }
+
+    public void setReceiveDate(Date receiveDate) {
+        this.receiveDate = receiveDate;
     }
 
     public String getSubject() {
